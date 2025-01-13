@@ -10,7 +10,7 @@ from tqdm import tqdm
 
 COL_NAMES = [
                 'TrialNumber', 'atypical', 'atypical_log',
-                'exclude_session', 'image_name', 'image_category',
+                'not_for_memory', 'image_name', 'image_category',
                 'things_image_nr', 'things_category_nr', 'onset',
                 'duration', 'repetition', 'condition', 'response_type',
                 'subcondition', 'response_subtype', 'response_txt',

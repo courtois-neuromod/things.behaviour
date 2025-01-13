@@ -332,7 +332,7 @@ def process_runs(
     Input:
         in_path: path to bids folder that contains *events.tsv files
         out_path: path to output directory
-        clean_mode: if True, trials for which the flag exclude_session == True
+        clean_mode: if True, trials for which the flag not_for_memory == True
         are excluded from the score calculations.
     Output:
         None
@@ -367,8 +367,8 @@ def process_runs(
             '''
             ids = run_path.split('/')[-1].split('_')
             assert sub_num == ids[0]
-            sess_num = ids[1]
-            run_num = ids[-2]
+            sess_num = f"ses-0{ids[1][-2:]}"  #ids[1]  2 -> 3 zero padding
+            run_num = f"run-{ids[-2][-1]}" # ids[-2]  2 -> 1 zero padding
             ids_vals = [sub_num, sess_num, run_num]
 
             df = pd.read_csv(run_path, sep = '\t')
@@ -376,7 +376,7 @@ def process_runs(
             """
             if clean_mode == True, exclude runs flagged during clean-up process
             """
-            exclude_file = df['exclude_session'][0] == True if clean_mode else False
+            exclude_file = df['not_for_memory'][0] == True if clean_mode else False
             na_count = np.sum(df['response'].isna())
             if (na_count > 0) and not exclude_file:
                 na_report.write(
@@ -479,7 +479,7 @@ def main():
         '--clean',
         action='store_true',
         default=False,
-        help='if true, exclude trials flagged w exclude_session == True',
+        help='if true, exclude trials flagged w not_for_memory == True',
     )
     args = parser.parse_args()
 

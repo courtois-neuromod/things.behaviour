@@ -15,11 +15,11 @@ OUTDIR="cneuromod-things/THINGS/behaviour"
 python code/behav_data_memoperformance.py --idir="${DATADIR}" --odir="${OUTDIR}" --clean
 ```
 
-Of note, a handful of sessions had their planned patterns of repetition affected by a session administered out of order (sub-03's sessions 24, 25 and 26; sub-06's sessions 19 to 26). These sessions included "atypical trials" (e.g., images shown more than 3 times), and were excluded from the computation of behavioural performance metrics (they were flagged with ``exclude_session == True`` in their ``*events.tsv`` file).
+Of note, a handful of sessions had their planned patterns of repetition affected by a session administered out of order (sub-03's sessions 24, 25 and 26; sub-06's sessions 19 to 26). These sessions included "atypical trials" (e.g., images shown more than 3 times), and were excluded from the computation of behavioural performance metrics (they were flagged with ``not_for_memory == True`` in their ``*events.tsv`` file).
 
 *Input*:
 
-- All four subjects' ``*events.tsv`` files, across sessions (~36) and runs (6 per session), e.g., ``sub-03_ses-17_task-thingsmemory_run-02_events.tsv``
+- All four subjects' ``*events.tsv`` files, across sessions (~36) and runs (6 per session), e.g., ``sub-03_ses-17_task-thingsmemory_run-2_events.tsv``
 
 
 *Output*:
@@ -58,7 +58,7 @@ python code/behav_data_annotate.py --events_dir="${EVDIR}" --annot_dir="${ANDIR}
 
 *Input*:
 
-- A subject's ``*events.tsv`` files, across sessions (~36) and runs (6 per session), e.g., ``sub-03_ses-17_task-thingsmemory_run-02_events.tsv``
+- A subject's ``*events.tsv`` files, across sessions (~36) and runs (6 per session), e.g., ``sub-03_ses-17_task-thingsmemory_run-2_events.tsv``
 - Various annotation files saved under ``stimuli/annotations``. E.g., ``task-things_desc-manual_annotation.tsv``
 
 *Output*:

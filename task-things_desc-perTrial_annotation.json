@@ -5,7 +5,7 @@
     "TrialNumber": "trial number within the current run (int), from 1 to 60",
     "atypical": "boolean flag identifies trials whose *events.tsv entries required relabelling (e.g., condition unseen -> seen) because a run was shown out of the pre-planned order",
     "atypical_log": "logged details about what corrections/relabelling were applied to an *events.tsv file trial entry; default is empty (no logged issue)",
-    "exclude_session": "boolean flag. True indicates sessions with trial conditions altered due to sessions being administered out of order. We recommend not to include these sessions in analyses of memory effects (e.g., atypical number of image repetitions), but these sessions are appropriate to study image and concept representations in the brain.",
+    "not_for_memory": "boolean flag. True indicates sessions with trial conditions altered due to sessions being administered out of order. We recommend not to include these sessions in analyses of memory effects (e.g., atypical number of image repetitions), but these sessions are appropriate to study image and concept representations in the brain.",
 
     "image_name": "stimulus image name, e.g., bubble_03s",
     "image_category": "image category, e.g., bubble",

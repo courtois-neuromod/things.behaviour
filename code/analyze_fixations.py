@@ -129,11 +129,14 @@ def main():
     ) # per gaze point
 
     et_file_list = sorted(glob.glob(
-        f'{in_path}/sub-{sub_num}/ses-0*/func/sub-{sub_num}*_eyetrack.tsv.gz'
+        f'{in_path}/sub-{sub_num}/ses-*/func/sub-{sub_num}*_eyetrack.tsv.gz'
     ))
     for et_file in et_file_list:
         sub, ses, task, run, _ = os.path.basename(et_file).split('_')
         #print(sub, ses, run)
+        # zero padding fix
+        ses = f"ses-0{ses[-2:]}"  # 2 -> 3 zero padding
+        run = f"run-{run[-1]}" # 2 -> 1 zero padding
 
         behav_file_path = glob.glob(
             f'{in_path}/{sub}/{ses}/func/*{run}*_events.tsv'

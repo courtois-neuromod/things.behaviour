@@ -90,35 +90,45 @@ def get_dprime(miss, hit, FA, CR):
     return old, new, H_min_FA, dprime
 
 
-def get_counts_and_rts(dframe, col_label = 'error'):
+def get_counts_and_rts(dframe, col_label='error', lastkp=False):
     '''
     Returns the tally of correct ('error' == False) and incorrect
     ('error' == True) trials, and the mean reaction time (s) for those trials
+
+    if lastkp is True, returns metrics based on last rather than first logged
+    key press
     '''
+    if lastkp:
+        col_label = f"{col_label}_lastkeypress"
+        df_rts = dframe.groupby(col_label).mean().response_time_lastkeypress
+    else:
+        df_rts = dframe.groupby(col_label).mean().response_time
+    rt_false = df_rts[False] if False in df_rts.index else NaN
+    rt_true = df_rts[True] if True in df_rts.index else NaN
+
     df_counts = dframe[col_label].value_counts()
     count_false = df_counts[False] if False in df_counts.index else 0
     count_true = df_counts[True] if True in df_counts.index else 0
 
-    df_rts = dframe.groupby(col_label).mean().response_time
-    rt_false = df_rts[False] if False in df_rts.index else NaN
-    rt_true = df_rts[True] if True in df_rts.index else NaN
-
     return count_false, count_true, rt_false, rt_true
 
 
-def extract_data_from_trials(df):
+def extract_data_from_trials(df, lkp=False):
     '''
     Extracts performance metrics from a single dataframe of individual trials
     Input:
         df(pandas DataFrame) created from behavioural .tsv file(s)
+        lkp (bool): if True, derive performance metrics from last (rather
+            than first) logged key press
     Output:
         run_data(list) performance metrics
     '''
+    kpf = "_lastkeypress" if lkp else ""
 
     df_unseen, df_seen = [x for _, x in df.groupby(df['condition']=='seen')]
 
-    hits, misses, rt_hit, rt_miss = get_counts_and_rts(df_seen)
-    corRej, falseA, rt_CR, rt_FA = get_counts_and_rts(df_unseen)
+    hits, misses, rt_hit, rt_miss = get_counts_and_rts(df_seen, lastkp=lkp)
+    corRej, falseA, rt_CR, rt_FA = get_counts_and_rts(df_unseen, lastkp=lkp)
 
     old, new, rate_H_min_FA, dprime = get_dprime(misses, hits, falseA, corRej)
 
@@ -150,20 +160,23 @@ def extract_data_from_trials(df):
     # Hit and miss rates and reaction times per subconditions
     (
         hit_within, miss_within, rt_hit_within, rt_miss_within,
-    ) = get_counts_and_rts(df_seen_within)
+    ) = get_counts_and_rts(df_seen_within, lastkp=lkp)
 
     no_trials = 0, 0, NaN, NaN
     (
         hit_between, miss_between, rt_hit_between, rt_miss_between
-    ) = no_trials if first_sess else get_counts_and_rts(df_seen_between)
+    ) = no_trials if first_sess else get_counts_and_rts(
+        df_seen_between, lastkp=lkp)
     (
         hit_within_between, miss_within_between,
         rt_hit_within_between, rt_miss_within_between
-    ) = no_trials if first_sess else get_counts_and_rts(df_seen_within_between)
+    ) = no_trials if first_sess else get_counts_and_rts(
+        df_seen_within_between, lastkp=lkp)
     (
         hit_between_within, miss_between_within,
         rt_hit_between_within, rt_miss_between_within
-    ) = no_trials if first_sess else get_counts_and_rts(df_seen_between_within)
+    ) = no_trials if first_sess else get_counts_and_rts(
+        df_seen_between_within, lastkp=lkp)
 
     """
     Hit - FA rate per subcondition
@@ -199,19 +212,23 @@ def extract_data_from_trials(df):
 
     # Hit, miss, FA and CR rates and reaction times per confidence rating
     hit_loConf, hit_hiConf, rt_hit_loConf, rt_hit_hiConf = get_counts_and_rts(
-        df_seen[df_seen['error']==False], 'response_confidence'
+        df_seen[df_seen[f'error{kpf}']==False],
+        'response_confidence', lastkp=lkp,
     ) if hits > 0 else no_trials
 
     miss_loConf, miss_hiConf, rt_miss_loConf, rt_miss_hiConf = get_counts_and_rts(
-        df_seen[df_seen['error']==True], 'response_confidence'
+        df_seen[df_seen[f'error{kpf}']==True],
+        'response_confidence', lastkp=lkp,
     ) if misses > 0 else no_trials
 
     FA_loConf, FA_hiConf, rt_FA_loConf, rt_FA_hiConf = get_counts_and_rts(
-        df_unseen[df_unseen['error']==True], 'response_confidence'
+        df_unseen[df_unseen[f'error{kpf}']==True],
+        'response_confidence', lastkp=lkp,
     ) if falseA > 0 else no_trials
 
     CR_loConf, CR_hiConf, rt_CR_loConf, rt_CR_hiConf = get_counts_and_rts(
-        df_unseen[df_unseen['error']==False], 'response_confidence'
+        df_unseen[df_unseen[f'error{kpf}']==False],
+        'response_confidence', lastkp=lkp,
     ) if corRej > 0 else no_trials
 
     """
@@ -241,61 +258,64 @@ def extract_data_from_trials(df):
         hit_within_loConf, hit_within_hiConf,
         rt_hit_within_loConf, rt_hit_within_hiConf,
     ) = get_counts_and_rts(
-        df_seen_within[df_seen_within['error']==False], 'response_confidence'
+        df_seen_within[df_seen_within[f'error{kpf}']==False],
+        'response_confidence', lastkp=lkp,
     ) if hit_within > 0 else no_trials
 
     (
         miss_within_loConf, miss_within_hiConf,
         rt_miss_within_loConf, rt_miss_within_hiConf,
     ) = get_counts_and_rts(
-        df_seen_within[df_seen_within['error']==True], 'response_confidence'
+        df_seen_within[df_seen_within[f'error{kpf}']==True],
+        'response_confidence', lastkp=lkp,
     ) if miss_within > 0 else no_trials
 
     (
         hit_between_loConf, hit_between_hiConf,
         rt_hit_between_loConf, rt_hit_between_hiConf,
     ) = get_counts_and_rts(
-        df_seen_between[df_seen_between['error']==False], 'response_confidence'
+        df_seen_between[df_seen_between[f'error{kpf}']==False],
+        'response_confidence', lastkp=lkp,
     ) if hit_between > 0 else no_trials
 
     (
         miss_between_loConf, miss_between_hiConf,
         rt_miss_between_loConf, rt_miss_between_hiConf,
     ) = get_counts_and_rts(
-        df_seen_between[df_seen_between['error']==True],
-        'response_confidence',
+        df_seen_between[df_seen_between[f'error{kpf}']==True],
+        'response_confidence', lastkp=lkp,
     ) if miss_between > 0 else no_trials
 
     (
         hit_within_between_loConf, hit_within_between_hiConf,
         rt_hit_within_between_loConf, rt_hit_within_between_hiConf,
     ) = get_counts_and_rts(
-        df_seen_within_between[df_seen_within_between['error']==False],
-        'response_confidence',
+        df_seen_within_between[df_seen_within_between[f'error{kpf}']==False],
+        'response_confidence', lastkp=lkp,
     ) if hit_within_between > 0 else no_trials
 
     (
         miss_within_between_loConf, miss_within_between_hiConf,
         rt_miss_within_between_loConf, rt_miss_within_between_hiConf,
     ) = get_counts_and_rts(
-        df_seen_within_between[df_seen_within_between['error']==True],
-        'response_confidence',
+        df_seen_within_between[df_seen_within_between[f'error{kpf}']==True],
+        'response_confidence', lastkp=lkp,
     ) if miss_within_between > 0 else no_trials
 
     (
         hit_between_within_loConf, hit_between_within_hiConf,
         rt_hit_between_within_loConf, rt_hit_between_within_hiConf,
     ) = get_counts_and_rts(
-        df_seen_between_within[df_seen_between_within['error']==False],
-        'response_confidence',
+        df_seen_between_within[df_seen_between_within[f'error{kpf}']==False],
+        'response_confidence', lastkp=lkp,
     ) if hit_between_within > 0 else no_trials
 
     (
         miss_between_within_loConf, miss_between_within_hiConf,
         rt_miss_between_within_loConf, rt_miss_between_within_hiConf,
     ) = get_counts_and_rts(
-        df_seen_between_within[df_seen_between_within['error']==True],
-        'response_confidence',
+        df_seen_between_within[df_seen_between_within[f'error{kpf}']==True],
+        'response_confidence', lastkp=lkp,
     ) if miss_between_within > 0 else no_trials
 
     return run_data + [
@@ -322,6 +342,7 @@ def process_runs(
     in_path: str,
     out_path: str,
     clean_mode: bool=False,
+    lkp: bool=False,
 ) -> None:
     '''
     For each subject, performance metrics are extracted per trial, per run,
@@ -334,6 +355,8 @@ def process_runs(
         out_path: path to output directory
         clean_mode: if True, trials for which the flag not_for_memory == True
         are excluded from the score calculations.
+        lkp: if True, use memory metrics derived from the last logged
+        key press (lkp), else (default) use metrics derived from first logged keypress.
     Output:
         None
     '''
@@ -392,7 +415,7 @@ def process_runs(
                     [x in SUBCONDITIONS for x in df['subcondition'].unique()]
                 )
                 if num_subcond == 6:
-                    run_data = ids_vals + extract_data_from_trials(df)
+                    run_data = ids_vals + extract_data_from_trials(df, lkp=lkp)
                     df_runs = df_runs.append(
                         pd.Series(run_data, index=df_runs.columns),
                         ignore_index=True,
@@ -419,7 +442,7 @@ def process_runs(
         '''
         # Exclude session 1 from subject's global score
         sub_data = [sub_num] + extract_data_from_trials(
-            df_trials[df_trials['session']!='ses-001']
+            df_trials[df_trials['session']!='ses-001'], lkp=lkp,
         )
         df_subjects = df_subjects.append(
             pd.Series(sub_data, index=df_subjects.columns), ignore_index=True,
@@ -429,7 +452,7 @@ def process_runs(
             sub_ses_df = df_trials[df_trials['session']==sess]
             if len(sub_ses_df['condition'].value_counts()) == 2:
                 sub_session_data = [sub_num, sess] + extract_data_from_trials(
-                    sub_ses_df
+                    sub_ses_df, lkp=lkp,
                 )
                 df_sessions = df_sessions.append(
                     pd.Series(sub_session_data, index=df_sessions.columns),
@@ -439,21 +462,24 @@ def process_runs(
         '''
         Export subject's dataframes
         '''
+        # key press flag
+        kp_flag = "LKP" if lkp else ""
+
         o_path = f"{out_path}/{sub_num}/beh/{sub_num}_task-things_desc-"
         df_trials.to_csv(
-            f"{o_path}perTrial_beh.tsv",
+            f"{o_path}perTrial{kp_flag}_beh.tsv",
             sep='\t', header=True, index=False,
         )
         df_runs.to_csv(
-            f"{o_path}perRun_beh.tsv",
+            f"{o_path}perRun{kp_flag}_beh.tsv",
             sep='\t', header=True, index=False,
         )
         df_sessions.to_csv(
-            f"{o_path}perSession_beh.tsv",
+            f"{o_path}perSession{kp_flag}_beh.tsv",
             sep='\t', header=True, index=False,
         )
         df_subjects.to_csv(
-            f"{o_path}global_beh.tsv",
+            f"{o_path}global{kp_flag}_beh.tsv",
             sep='\t', header=True, index=False,
         )
 
@@ -481,9 +507,16 @@ def main():
         default=False,
         help='if true, exclude trials flagged w not_for_memory == True',
     )
+    parser.add_argument(
+        '--lastkp',
+        action='store_true',
+        default=False,
+        help='if true, use memory metrics derived from the last logged key press,'
+            'else from first logged key press (default).',
+    )
     args = parser.parse_args()
 
-    process_runs(args.idir, args.odir, args.clean)
+    process_runs(args.idir, args.odir, args.clean, args.lastkp)
 
 
 if __name__ == '__main__':

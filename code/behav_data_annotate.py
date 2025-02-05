@@ -12,10 +12,14 @@ COL_NAMES = [
                 'TrialNumber', 'atypical', 'atypical_log',
                 'not_for_memory', 'image_name', 'image_category',
                 'things_image_nr', 'things_category_nr', 'onset',
-                'duration', 'repetition', 'condition', 'response_type',
-                'subcondition', 'response_subtype', 'response_txt',
+                'duration', 'repetition', 'condition', 'subcondition',
+                'response_type', 'response_subtype', 'response_txt',
                 'response_confidence', 'response_typeConf',
-                'response_time', 'session_trial_time', 'delay_days',
+                'response_time',
+                'response_type_lastkeypress', 'response_subtype_lastkeypress',
+                'response_txt_lastkeypress', 'response_confidence_lastkeypress',
+                'response_typeConf_lastkeypress', 'response_time_lastkeypress',
+                'session_trial_time', 'delay_days',
                 'delay_seconds', 'trials_since_lastrep',
                 'highercat27_names', 'highercat53_names',
                 'highercat53_num', 'categ_concreteness',
@@ -93,78 +97,93 @@ def get_cat(row):
     return row['image_path'].split('/')[-2]
 
 
-def get_respType(row):
+def get_respType(row, lkp=False):
     '''
     Return response type based on image condition and subject's accuracy
+
+    If lkp is True, derive response type from trial's last logged
+    key press, else (default) derive from first logged key press
     '''
-    if row['condition']=='seen' and row['error']==False:
+    lkp_flag = "_lastkeypress" if lkp else ""
+
+    if row['condition']=='seen' and row[f'error{lkp_flag}']==False:
         return 'Hit'
-    if row['condition']=='seen' and row['error']==True:
+    if row['condition']=='seen' and row[f'error{lkp_flag}']==True:
         return 'Miss'
-    if row['condition']=='unseen' and row['error']==False:
+    if row['condition']=='unseen' and row[f'error{lkp_flag}']==False:
         return 'CR'
-    if row['condition']=='unseen' and row['error']==True:
+    if row['condition']=='unseen' and row[f'error{lkp_flag}']==True:
         return 'FA'
     return np.nan
 
 
-def get_respSubtype(row):
+def get_respSubtype(row, lkp=False):
     '''
     Return response subtype based on image subcondition and subject's accuracy
+
+    If lkp is True, derive response subtype from trial's last logged
+    key press, else (default) derive from first logged key press
     '''
-    if row['subcondition']=='seen-within' and row['error']==False:
+    lkp_flag = "_lastkeypress" if lkp else ""
+
+    if row['subcondition']=='seen-within' and row[f'error{lkp_flag}']==False:
         return 'Hit_w'
-    if row['subcondition']=='seen-between' and row['error']==False:
+    if row['subcondition']=='seen-between' and row[f'error{lkp_flag}']==False:
         return 'Hit_b'
-    if row['subcondition']=='seen-within-between' and row['error']==False:
+    if row['subcondition']=='seen-within-between' and row[f'error{lkp_flag}']==False:
         return 'Hit_wb'
-    if row['subcondition']=='seen-between-within' and row['error']==False:
+    if row['subcondition']=='seen-between-within' and row[f'error{lkp_flag}']==False:
         return 'Hit_bw'
 
-    if row['subcondition']=='seen-within' and row['error']==True:
+    if row['subcondition']=='seen-within' and row[f'error{lkp_flag}']==True:
         return 'Miss_w'
-    if row['subcondition']=='seen-between' and row['error']==True:
+    if row['subcondition']=='seen-between' and row[f'error{lkp_flag}']==True:
         return 'Miss_b'
-    if row['subcondition']=='seen-within-between' and row['error']==True:
+    if row['subcondition']=='seen-within-between' and row[f'error{lkp_flag}']==True:
         return 'Miss_wb'
-    if row['subcondition']=='seen-between-within' and row['error']==True:
+    if row['subcondition']=='seen-between-within' and row[f'error{lkp_flag}']==True:
         return 'Miss_bw'
 
-    if row['subcondition']=='unseen-within' and row['error']==False:
+    if row['subcondition']=='unseen-within' and row[f'error{lkp_flag}']==False:
         return 'CR'
-    if row['subcondition']=='unseen-between' and row['error']==False:
+    if row['subcondition']=='unseen-between' and row[f'error{lkp_flag}']==False:
         return 'CR'
 
-    if row['subcondition']=='unseen-within' and row['error']==True:
+    if row['subcondition']=='unseen-within' and row[f'error{lkp_flag}']==True:
         return 'FA'
-    if row['subcondition']=='unseen-between' and row['error']==True:
+    if row['subcondition']=='unseen-between' and row[f'error{lkp_flag}']==True:
         return 'FA'
 
     return np.nan
 
 
-def get_respTypeConf(row):
+def get_respTypeConf(row, lkp=False):
     '''
     Return response type  based on image condition and subject's accuracy and confidence
+
+    If lkp is True, derive response confidence from trial's last logged
+    key press, else (default) derive from first logged key press
     '''
-    if row['condition']=='seen' and row['error']==False and row['response_confidence']==False:
+    lkp_flag = "_lastkeypress" if lkp else ""
+
+    if row['condition']=='seen' and row[f'error{lkp_flag}']==False and row[f'response_confidence{lkp_flag}']==False:
         return 'Hit_LC'
-    if row['condition']=='seen' and row['error']==False and row['response_confidence']==True:
+    if row['condition']=='seen' and row[f'error{lkp_flag}']==False and row[f'response_confidence{lkp_flag}']==True:
         return 'Hit_HC'
 
-    if row['condition']=='seen' and row['error']==True and row['response_confidence']==False:
+    if row['condition']=='seen' and row[f'error{lkp_flag}']==True and row[f'response_confidence{lkp_flag}']==False:
         return 'Miss_LC'
-    if row['condition']=='seen' and row['error']==True and row['response_confidence']==True:
+    if row['condition']=='seen' and row[f'error{lkp_flag}']==True and row[f'response_confidence{lkp_flag}']==True:
         return 'Miss_HC'
 
-    if row['condition']=='unseen' and row['error']==False and row['response_confidence']==False:
+    if row['condition']=='unseen' and row[f'error{lkp_flag}']==False and row[f'response_confidence{lkp_flag}']==False:
         return 'CR_LC'
-    if row['condition']=='unseen' and row['error']==False and row['response_confidence']==True:
+    if row['condition']=='unseen' and row[f'error{lkp_flag}']==False and row[f'response_confidence{lkp_flag}']==True:
         return 'CR_HC'
 
-    if row['condition']=='unseen' and row['error']==True and row['response_confidence']==False:
+    if row['condition']=='unseen' and row[f'error{lkp_flag}']==True and row[f'response_confidence{lkp_flag}']==False:
         return 'FA_LC'
-    if row['condition']=='unseen' and row['error']==True and row['response_confidence']==True:
+    if row['condition']=='unseen' and row[f'error{lkp_flag}']==True and row[f'response_confidence{lkp_flag}']==True:
         return 'FA_HC'
 
     return np.nan
@@ -287,15 +306,26 @@ def process_files(
         # Add columns generated from events.tsv file's own data
         df['image_name'] = df.apply(lambda row: get_name(row), axis=1)
         df['image_category'] = df.apply(lambda row: get_cat(row), axis=1)
+
         df['response_type'] = df.apply(lambda row: get_respType(row), axis=1)
+        df['response_type_lastkeypress'] = df.apply(
+            lambda row: get_respType(row, lkp=True), axis=1
+        )
         df['response_subtype'] = df.apply(lambda row: get_respSubtype(row), axis=1)
+        df['response_subtype_lastkeypress'] = df.apply(
+            lambda row: get_respSubtype(row, lkp=True), axis=1
+        )
         df['response_typeConf'] = df.apply(lambda row: get_respTypeConf(row), axis=1)
+        df['response_typeConf_lastkeypress'] = df.apply(
+            lambda row: get_respTypeConf(row, lkp=True), axis=1
+        )
+
         df[['things_image_nr', 'things_category_nr']] = df[
             ['things_image_nr', 'things_category_nr']].astype(int)
 
         # Add columns of annotations imported from THINGS & THINGSplus databases
         categ53 = pd.read_csv(
-            f"{annot_path}/THINGS+/category53_wideFormat.tsv", sep='\t')
+            f"{annot_path}/THINGSplus/category53_wideFormat.tsv", sep='\t')
         # transform matrix of one-hots into DF w two columns before
         # indexing values
         cat53_1854 = format_cat53(categ53)
@@ -307,7 +337,7 @@ def process_files(
         # Ratings averaged over / categorizations common to images
         # from same category / concept
         tg_concepts = pd.read_csv(
-            f"{annot_path}/THINGS+/things_concepts.tsv", sep= '\t')
+            f"{annot_path}/THINGSplus/things_concepts.tsv", sep= '\t')
         df['highercat27_names'] = df.apply(lambda row: get_THINGSmatch(
             row, 'things_category_nr', 'Bottom-up Category (Human Raters)',
             tg_concepts), axis=1)
@@ -319,7 +349,7 @@ def process_files(
 
 
         img_concepts = pd.read_csv(
-            f"{annot_path}/THINGS+/imageLabeling_objectWise.tsv", sep='\t')
+            f"{annot_path}/THINGSplus/imageLabeling_objectWise.tsv", sep='\t')
         df['categ_nameability'] = df.apply(lambda row: get_THINGSmatch(
             row, 'things_category_nr', 'nameability_mean', img_concepts), axis=1)
         # Feature removed from updated dataset
@@ -330,13 +360,13 @@ def process_files(
 
 
         obj_size = pd.read_csv(
-            f"{annot_path}/THINGS+/size_meanRatings.tsv", sep='\t')
+            f"{annot_path}/THINGSplus/size_meanRatings.tsv", sep='\t')
         df['categ_size'] = df.apply(lambda row: get_THINGSmatch(
             row, 'things_category_nr', 'Size_mean', obj_size), axis=1)
 
 
         obj_properties = pd.read_csv(
-            f"{annot_path}/THINGS+/objectProperties_meanRatings.tsv", sep='\t')
+            f"{annot_path}/THINGSplus/objectProperties_meanRatings.tsv", sep='\t')
         df['categ_manmade'] = df.apply(lambda row: get_THINGSmatch(
             row, 'things_category_nr', 'manmade_mean', obj_properties), axis=1)
         df['categ_precious'] = df.apply(lambda row: get_THINGSmatch(
@@ -359,13 +389,13 @@ def process_files(
             row, 'things_category_nr', 'pleasant_mean', obj_properties), axis=1)
 
         ar = pd.read_csv(
-            f"{annot_path}/THINGS+/arousal_meanRatings.tsv", sep='\t')
+            f"{annot_path}/THINGSplus/arousal_meanRatings.tsv", sep='\t')
         df['categ_arousal'] = df.apply(lambda row: get_THINGSmatch(
             row, 'things_category_nr', 'arousing_mean', ar), axis=1)
 
         # Image-specific ratings
         img_labels = pd.read_csv(
-            f"{annot_path}/THINGS+/imageLabeling_imageWise.tsv", sep='\t')
+            f"{annot_path}/THINGSplus/imageLabeling_imageWise.tsv", sep='\t')
         img_labels['image_name'] = img_labels.apply(
             lambda row: row['image'].split('/')[-1].split('.')[0], axis=1)
         img_labels = img_labels.set_index('image_name')
@@ -380,7 +410,7 @@ def process_files(
         # NOTE: need permission to share
         # Image-specific memorability (courtesy of Wilma Bainbridge's group)
         #img_memo = pd.read_csv(
-        #    f"{annot_path}/THINGS+/THINGS_Memorability_Scores.csv", sep= ','
+        #    f"{annot_path}/THINGSplus/THINGS_Memorability_Scores.csv", sep= ','
         #)
         #img_memo['image_name'] = img_memo.apply(
         #    lambda row: row['image_name'].split('/')[-1].split('.')[0], axis=1)
@@ -413,7 +443,7 @@ if __name__ == '__main__':
     for classification analyses.
 
     Columns include class-wise and image-wise labels and ratings from
-    the THINGS+ database, as well as indicators of trial-wise memory performance.
+    the THINGSplus database, as well as indicators of trial-wise memory performance.
 
     Values are exported as one .tsv file per subject for which all sessions
     and runs are concatenated.

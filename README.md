@@ -3,9 +3,9 @@ THINGS behavioural & eye-tracking data analyses
 
 ## Image Recognition Performance Metrics
 
-Metrics of behavioural performance on the continuous image recognition task (hits, false alarm, d', reaction times) are computed per run, per session (6 runs except for session 1) and per subject (across all sessions) from run-specific ``*events.tsv`` files.
+Metrics of behavioural performance on CNeuroMod-THINGS continuous image recognition task (hits, false alarm, d', reaction times) are computed per run, per session (6 runs except for session 1) and per subject (across all sessions) from run-specific ``*events.tsv`` files.
 
-Scores are outputed as ``.tsv`` files in the ``THINGS/behaviour`` dataset. Output columns are described in ``task-things_beh.json``
+Scores are saved as ``.tsv`` files in ``sub-0*/beh``. Output columns are described in ``task-things_beh.json``
 
 Launch the following script to process all subjects & sessions
 ```bash
@@ -15,7 +15,8 @@ OUTDIR="cneuromod-things/THINGS/behaviour"
 python code/behav_data_memoperformance.py --idir="${DATADIR}" --odir="${OUTDIR}" --clean
 ```
 
-Of note, a handful of sessions had their planned patterns of repetition affected by a session administered out of order (sub-03's sessions 24, 25 and 26; sub-06's sessions 19 to 26). These sessions included "atypical trials" (e.g., images shown more than 3 times), and were excluded from the computation of behavioural performance metrics (they were flagged with ``not_for_memory == True`` in their ``*events.tsv`` file).
+**Note:** a handful of sessions had their planned patterns of repetition disrupted by a few sessions administered out of order (sub-03's sessions 24, 25 and 26; sub-06's sessions 19 to 26 inclusively). These sessions included "atypical trials" (e.g., images shown more than 3 times), and were excluded from the computation of behavioural performance metrics (they were flagged with ``not_for_memory == True`` in their ``*events.tsv`` file).
+
 
 *Input*:
 
@@ -31,12 +32,15 @@ Of note, a handful of sessions had their planned patterns of repetition affected
 - ``sub-0*/beh/sub-0*_task-things_desc-global_beh.tsv``, subject's overall performance metrics on the entire task (excludes session 1 in the averaging). Columns are described in ``task-things_beh.json``
 
 
+**Note:** By default, the script derives metrics of performance from the **first key press** logged for a given trial. To derive metrics from the **last logged key press** instead (which accounts for subject self-correction), use the ``lastkp`` flag like this: ``python code/behav_data_memoperformance.py --idir="${DATADIR}" --odir="${OUTDIR}" --clean --lastkp``.
+
+
 ---------------------------
 ## Trial-Wise Image Ratings and Annotations
 
-Image ratings from the [THINGS](https://things-initiative.org/) and THINGSplus datasets, and manual image annotations produced specifically for CNeuroMod-things, are assigned to each trial to perform representation analyses. Annotated trials are outputted as ``.tsv`` files per subject in the ``THINGS/behaviour`` dataset.
+Image ratings from the [THINGS](https://things-initiative.org/) and THINGSplus datasets, and manual image annotations produced specifically for CNeuroMod-THINGS, are assigned to each trial to perform representation analyses. Annotated trials are outputted as ``.tsv`` files per subject under ``sub-0*/beh``.
 
-The following image annotation files were downloaded from the [THINGS object concept and object image database](https://osf.io/jum2f/), and saved directly under ``cneuromod-things/THINGS/fmriprep/sourcedata/things/stimuli/annotations/THINGS+``:
+The following image annotation files were downloaded from the [THINGS object concept and object image database](https://osf.io/jum2f/), and saved directly under ``cneuromod-things/THINGS/fmriprep/sourcedata/things/stimuli/annotations/THINGSplus``:
 * ``THINGS/things_concepts.tsv``
 * ``THINGSplus/Metadata/Concept-specific/arousal_meanRatings.tsv``
 * ``THINGSplus/Metadata/Concept-specific/category53_wideFormat.tsv``

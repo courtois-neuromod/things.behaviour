@@ -19,12 +19,6 @@
       "seen": "the image has either been shown during the previous session (scan) or it is being repeated within the current session",
       "unseen": "the image has never at any time been shown to the participant"
     },
-    "response_type": {
-      "CR": "correct rejection (never-shown image is correctly identified as unseen)",
-      "FA": "never-shown image is incorrectly identified as seen",
-      "Hit": "previously shown image is correctly identified as seen",
-      "Miss": "previously shown image is incorrectly identified as unseen",
-    },
     "subcondition": {
       "unseen-between": "image has never been shown, WILL be shown a 2nd time during the NEXT session(fMRI scan), ~1 week later",
       "unseen-within": "image has never been shown, WILL be shown a 2nd time during the CURRENT fMRI session",
@@ -32,6 +26,12 @@
       "seen-within": "image was shown to the participant once before during the CURRENT session",
       "seen-within-between": "image was shown twice WITHIN the previous session (~1 week ago), is shown for the 3rd time during the current session",
       "seen-between-within": "image was first shown (once) during the previous session (~1 week ago), it was shown a second time during the current session, and is now shown for the third time",
+    },
+    "response_type": {
+      "CR": "correct rejection (never-shown image is correctly identified as unseen)",
+      "FA": "never-shown image is incorrectly identified as seen",
+      "Hit": "previously shown image is correctly identified as seen",
+      "Miss": "previously shown image is incorrectly identified as unseen",
     },
     "response_subtype": {
       "CR": "correct rejection (never-shown image is correctly identified as unseen)",
@@ -47,8 +47,10 @@
       "Hit_*C": "previously shown image is correctly identified as seen with low (Hit_LC) or high (Hit_HC) confidence",
       "Miss_*C": "previously shown image is incorrectly identified as unseen with low (Miss_LC) or high (Miss_HC) confidence",
     },
-
     "response_time": "time in seconds between the image onset ('onset') and the first recorded button press",
+
+    "*_lastkeypress": "performance metrics derived from the LAST rather than the FIRST (default) key press logged for a given trial. Includes response_type_lastkeypress, response_subtype_lastkeypress, response_txt_lastkeypress, response_confidence_lastkeypress, response_typeConf_lastkeypress and response_time_lastkeypress.",
+
     "session_trial_time": "logged computer clock time for each trial",
     "delay_days": "for 2nd and 3rd image showings, number of days elapsed since the image was last shown. 0.0 indicates within-session repetitions",
     "delay_seconds": "for within-session repetitions (2nd and 3rd showings), number of seconds elapsed since the image was last shown. 0.0 indicates between-session repetitions for which delays are expressed in days rather than seconds",

@@ -100,6 +100,10 @@ def main():
                     'duration',
                     'response',
                     'error',
+                    'response_time',
+                    'response_lastkeypress',
+                    'error_lastkeypress',
+                    'response_time_lastkeypress',
                     'drift_correction_strategy',
                     'fix_gaze_count_ratio',
                     'trial_gaze_count_ratio',
@@ -135,8 +139,8 @@ def main():
         sub, ses, task, run, _ = os.path.basename(et_file).split('_')
         #print(sub, ses, run)
         # zero padding fix
-        ses = f"ses-0{ses[-2:]}"  # 2 -> 3 zero padding
-        run = f"run-{run[-1]}" # 2 -> 1 zero padding
+        #ses = f"ses-0{ses[-2:]}"  # 2 -> 3 zero padding
+        #run = f"run-{run[-1]}" # 2 -> 1 zero padding
 
         behav_file_path = glob.glob(
             f'{in_path}/{sub}/{ses}/func/*{run}*_events.tsv'
@@ -146,6 +150,9 @@ def main():
         df_alltrials = pd.concat((df_alltrials, df_b[cols2keep]), ignore_index=True)
 
         df_et = pd.read_csv(et_file, sep= '\t')
+
+        ses = f"ses-0{ses[-2:]}"  # 2 -> 3 zero padding
+        run = f"run-{run[-1]}" # 2 -> 1 zero padding
 
         for i in range(df_b.shape[0]):
             # skip trials  with no behav response (button press)

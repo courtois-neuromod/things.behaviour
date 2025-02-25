@@ -1,7 +1,7 @@
 {
-    "subject": "participant id",
-    "session": "session number",
-    "run": "current session's fMRI run number",
+    "subject_id": "participant id",
+    "session_id": "session number",
+    "run_id": "current session's fMRI run number",
     "TrialNumber": "trial number within the current run, from 1 to 60",
     "image_path": "path to image file within data repository",
     "image_nr": "number attributed to the image within the current task dataset, from 1 to ~8634",

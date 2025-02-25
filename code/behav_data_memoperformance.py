@@ -360,7 +360,7 @@ def process_runs(
     Output:
         None
     '''
-    f_ids = ['subject', 'session', 'run']
+    f_ids = ['subject_id', 'session_id', 'run_id']
 
     # text file documents # of trials with no response, per run
     na_report = open(f"{out_path}/na_report.txt", 'w+')
@@ -442,14 +442,14 @@ def process_runs(
         '''
         # Exclude session 1 from subject's global score
         sub_data = [sub_num] + extract_data_from_trials(
-            df_trials[df_trials['session']!='ses-001'], lkp=lkp,
+            df_trials[df_trials['session_id']!='ses-001'], lkp=lkp,
         )
         df_subjects = df_subjects.append(
             pd.Series(sub_data, index=df_subjects.columns), ignore_index=True,
         )
 
-        for sess in df_trials['session'].unique():
-            sub_ses_df = df_trials[df_trials['session']==sess]
+        for sess in df_trials['session_id'].unique():
+            sub_ses_df = df_trials[df_trials['session_id']==sess]
             if len(sub_ses_df['condition'].value_counts()) == 2:
                 sub_session_data = [sub_num, sess] + extract_data_from_trials(
                     sub_ses_df, lkp=lkp,

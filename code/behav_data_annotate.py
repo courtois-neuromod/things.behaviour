@@ -282,7 +282,7 @@ def process_files(
     '''
     Generate concatenated matrix of trial-wise annotations
     '''
-    ids = ['subject', 'session', 'run']
+    ids = ['subject_id', 'session_id', 'run_id']
 
     manual_cols = [f"manual_{x}" for x in COL_MANUAL]
     sub_df = pd.DataFrame(columns=ids + COL_NAMES + manual_cols)
@@ -299,7 +299,7 @@ def process_files(
         # Add suject, session and run identifiers for concatenation
         #df.insert(loc=0, column=ids[0], value=sub_num, allow_duplicates=True)
         #df.insert(loc=1, column=ids[1], value=ses_num, allow_duplicates=True)
-        rn = df['run'][0]
+        rn = df['run_id'][0]
         assert f'{rn:02}' == run_num
         #df.insert(loc=2, column=ids[2], value=run_num, allow_duplicates=True)
 

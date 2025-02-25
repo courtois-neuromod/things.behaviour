@@ -87,9 +87,9 @@ def main():
     conf_thresh = 0.75 if sub_num == "01" else 0.9
 
     cols2keep = [
-                    'subject',
-                    'session',
-                    'run',
+                    'subject_id',
+                    'session_id',
+                    'run_id',
                     'TrialNumber',
                     'image_path',
                     'image_nr',
@@ -129,7 +129,7 @@ def main():
 
     df_alltrials = pd.DataFrame(columns=cols2keep) # per trial
     df_allgaze = pd.DataFrame(
-        columns=['subject','session', 'run', 'trial', 'x', 'y', 'dist']
+        columns=['subject_id','session_id', 'run_id', 'trial', 'x', 'y', 'dist']
     ) # per gaze point
 
     et_file_list = sorted(glob.glob(
@@ -181,9 +181,9 @@ def main():
                         "dist": dist_deg,
                     }
                 )
-                df_deg.insert(loc=0, column="subject", value=sub, allow_duplicates=True)
-                df_deg.insert(loc=1, column="session", value=ses, allow_duplicates=True)
-                df_deg.insert(loc=2, column="run", value=run, allow_duplicates=True)
+                df_deg.insert(loc=0, column="subject_id", value=sub, allow_duplicates=True)
+                df_deg.insert(loc=1, column="session_id", value=ses, allow_duplicates=True)
+                df_deg.insert(loc=2, column="run_id", value=run, allow_duplicates=True)
                 df_deg.insert(loc=3, column="trial", value=trial_num, allow_duplicates=True)
 
                 df_allgaze = pd.concat((df_allgaze, df_deg), ignore_index=True)

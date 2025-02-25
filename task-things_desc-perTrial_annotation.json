@@ -1,7 +1,7 @@
 {
-    "subject": "subject number (int), e.g., 1 for sub-01",
-    "session": "session number (str), e.g., ses-001",
-    "run": "session's run number (int) from 1-6, e.g., 1",
+    "subject_id": "subject number (int), e.g., 1 for sub-01",
+    "session_id": "session number (str), e.g., ses-001",
+    "run_id": "session's run number (int) from 1-6, e.g., 1",
     "TrialNumber": "trial number within the current run (int), from 1 to 60",
     "atypical": "boolean flag identifies trials whose *events.tsv entries required relabelling (e.g., condition unseen -> seen) because a run was shown out of the pre-planned order",
     "atypical_log": "logged details about what corrections/relabelling were applied to an *events.tsv file trial entry; default is empty (no logged issue)",

@@ -1,5 +1,5 @@
 {
-    "subject": "subject number, e.g., sub-01",
+    "subject_id": "subject number, e.g., sub-01",
     "hit": "tallied number of hit trials (old image is correctly recognized as old)",
     "miss": "tallied number of miss trials (old image is incorrectly labelled as new)",
     "false_alarm": "tallied number of false alarms trials (new image is incorrectly 'recognized' as old)",

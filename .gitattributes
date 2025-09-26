@@ -6,3 +6,4 @@
 *.py annex.largefiles=nothing
 * annex.backend=MD5E
 **/.git* annex.largefiles=nothing
+.github/** annex.largefiles=nothing
